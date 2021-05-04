@@ -1,0 +1,173 @@
+--//////////////////////////////////////////////////////////////////////////////////////////////////
+--                                                                                                --
+--                       _ . , _ , . _ # ] S H A D E R F O L D [ # _ . , _                        --
+--                                                                                                --
+----------------------------------------------------------------------------------------------------
+--  Defold-compatible boilerplate shader for porting ShaderToy code.                              --
+----------------------------------------------------------------------------------------------------
+-- CREDITS                                                                                        --
+-- - ShaderToy Mouse Input by iq: https://www.shadertoy.com/view/Mss3zH                           --
+-- - tuto: new mouse events by FabriceNeyret2: https://www.shadertoy.com/view/3dcBRS              --
+----------------------------------------------------------------------------------------------------
+-- v0.1 | May 03, 2021 | Please, Frost Responsibly | Made with <3 by Tubcake Games                --
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+-- GameObject Properties
+go.property("time_scale", 1)
+go.property("tint", vmath.vector4(1, 1, 1, 1))
+go.property("mesh_size", vmath.vector3(2, 2, 1)) -- Default Mesh is a 2x2 Quad
+
+----------------------------------------------------------------------------------------------------
+-- Internal Controller
+local __ctrl = {}
+-- Controller Mouse IDs
+__ctrl.click_l = hash("touch")
+-- Debug Key IDs
+__ctrl.debug_profiler = hash("key_profiler")
+
+----------------------------------------------------------------------------------------------------
+-- Internal Messaging
+local __msg = {}
+-- Internal Message IDs
+__msg.id_shader_go = "ShaderFold"
+__msg.id_model = "#shader_model"
+__msg.id_parent = "."
+-- Outgoing Message IDs
+__msg.out_acquire_input_focus = "acquire_input_focus"
+-- Message Properties IDs
+__msg.prop_timeframe = "iTimeFrame"
+__msg.prop_resolution = "iResolution"
+__msg.prop_mouse = "iMouse"
+__msg.prop_tint = "tint"
+__msg.prop_position = "position"
+__msg.prop_scale = "scale"
+
+----------------------------------------------------------------------------------------------------
+-- Internal Debug
+local __dbg = {}
+__dbg.profiler_enabled =  false
+
+----------------------------------------------------------------------------------------------------
+-- Script
+----------------------------------------------------------------------------------------------------
+
+--
+-- Initialization
+--
+function init(self)
+	-- Initialize Shader Input
+	msg.post(__msg.id_parent, __msg.out_acquire_input_focus)
+
+	-- Initialize the Internal TimeFrame Properties
+	self.time = 0
+	self.time_delta = 0
+	self.frame = 0
+	-- Initialize the Internal Mouse Properties
+	self.mouse_down = -1
+	self.mouse_clicked = -1
+	self.mouse_state = vmath.vector4(0, 0, self.mouse_down, self.mouse_clicked)
+
+	-- Initialize the Shader Resolution
+	self.screen_width, self.screen_height = window.get_size()
+	self.go_scale = go.get(__msg.id_shader_go, __msg.prop_scale)
+	self.go_scale.x = self.go_scale.x * self.mesh_size.x ; self.go_scale.y = self.go_scale.y * self.mesh_size.y
+	go.set(__msg.id_model, __msg.prop_resolution, vmath.vector4(self.go_scale.x / self.screen_width, self.go_scale.y / self.screen_height, 0, 0))
+	
+	-- Initialize the Shader GameObject
+	__msg.id_shader_go = msg.url(nil, __msg.id_shader_go, nil)
+	go.set(__msg.id_shader_go, __msg.prop_position, vmath.vector3(self.screen_width / 2, self.screen_height / 2, 0)) -- Center the Shader GameObject
+	go.set(__msg.id_model, __msg.prop_tint, self.tint)
+	
+	-- Update the Shader Resolution on Window Resize Callback
+	window.set_listener(function (self, event, data)
+		if data.width then -- Ensure a Screen Size was Provided
+			self.screen_width, self.screen_height = data.width, data.height
+			go.set(__msg.id_model, __msg.prop_resolution, vmath.vector4(self.screen_width / self.go_scale.x, self.screen_height / self.go_scale.y, 0, 0)) end end)
+end
+
+--
+-- Finalization
+--
+function final(self)
+	-- Add finalization code here
+	-- Learn more: https://defold.com/manuals/script/
+	-- Remove this function if not needed
+end
+
+--
+-- Updating
+--
+function update(self, dt)
+	-- Increment the Internal TimeFrame
+	self.frame = 1+self.frame
+	self.time_delta = dt * self.time_scale
+	self.time = self.time + self.time_delta
+	
+	-- Update the Shader TimeFrame
+	go.set(__msg.id_model, __msg.prop_timeframe, vmath.vector4(self.time, self.time_delta, self.frame, 0))
+	
+	-- Update the Shader Mouse State
+	if self.mouse_down == 1 then -- Offset by a Single Frame to Ensure the Shader Receives the Initial Mouse Click Event
+		go.set(__msg.id_model, __msg.prop_mouse, self.mouse_state)
+	elseif self.mouse_clicked == 1 then
+		self.mouse_down = 1
+		self.mouse_clicked = -1
+		self.mouse_state.w = -math.abs(self.mouse_state.w) -- Release Mouse Click
+	end
+end
+
+--
+-- Messaging
+--
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+--
+-- Input
+--
+function on_input(self, action_id, action)
+	----------------------------------------------------------------------------------------------------
+	-- Mouse Moved
+	if action.x and self.mouse_down == 1 then
+		self.mouse_state.x, self.mouse_state.y = action.x / self.screen_width, action.y / self.screen_height
+		-- Update the Shader Mouse State
+		go.set(__msg.id_model, __msg.prop_mouse, self.mouse_state) end
+
+	-- Mouse Clicked
+	if action_id == __ctrl.click_l and action.pressed then
+		--self.mouse_down = -1 -- Offset by a Single Frame to Ensure the Shader Receives the Initial Mouse Click Event
+		self.mouse_clicked = 1
+		self.mouse_state.x, self.mouse_state.y = action.x / self.screen_width, action.y / self.screen_height
+		self.mouse_state.w, self.mouse_state.z = self.mouse_state.x, self.mouse_state.y
+		-- Update the Shader Mouse State
+		go.set(__msg.id_model, __msg.prop_mouse, self.mouse_state)
+	
+	-- Mouse Released
+	elseif action_id == __ctrl.click_l and action.released then
+		self.mouse_down = -1
+		self.mouse_clicked = -1
+		self.mouse_state.x, self.mouse_state.y = action.x / self.screen_width, action.y / self.screen_height
+		self.mouse_state.w, self.mouse_state.z = -math.abs(self.mouse_state.w), -math.abs(self.mouse_state.z) -- Release Both Mouse Click and Down
+		-- Update the Shader Mouse State
+		go.set(__msg.id_model, __msg.prop_mouse, self.mouse_state)
+	
+	----------------------------------------------------------------------------------------------------
+	-- Profiler
+	elseif action_id == __ctrl.debug_profiler and action.pressed then
+		__dbg.profiler_enabled = not(__dbg.profiler_enabled)
+		profiler.enable_ui(__dbg.profiler_enabled)
+	end
+end
+
+--
+-- Reloading
+--
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end
