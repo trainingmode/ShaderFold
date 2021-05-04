@@ -16,8 +16,7 @@ See [DefFX](https://github.com/subsoap/deffx), [Defold Shader Examples](https://
 
 The goal of this project is to provide a template for porting and playing with code, not reimplement every ShaderToy input.
 
-This is in development, not well tested, and suffers multiple issues. Many shaders require fine tuning for resolution and input parity.  
-Feel free to [start a discussion](https://github.com/trainingmode/BulletFold/discussions/new) for any problems you encounter or improvements.
+This is in development, not well tested, and suffers multiple issues. Many shaders require fine tuning for resolution and input parity. Feel free to [open an issue](https://github.com/trainingmode/ShaderFold/issues/new) for any problems you encounter or improvements.
 
 -----
 
@@ -144,4 +143,4 @@ Updates to shader constants are pushed from the [fold.script](main/fold.script) 
 
 ## Credits
 
-ShaderFold is based on [Input - Mouse](https://www.shadertoy.com/view/Mss3zH) by [iq (Inigo Quilez)](https://www.iquilezles.org/) and [tuto: new mouse events](https://www.shadertoy.com/view/3dcBRS) by [FabriceNeyret2](http://evasion.imag.fr/Membres/Fabrice.Neyret/).
+ShaderFold `iMouse` is based on [Input - Mouse](https://www.shadertoy.com/view/Mss3zH) by [iq (Inigo Quilez)](https://www.iquilezles.org/) and [tuto: new mouse events](https://www.shadertoy.com/view/3dcBRS) by [FabriceNeyret2](http://evasion.imag.fr/Membres/Fabrice.Neyret/).
