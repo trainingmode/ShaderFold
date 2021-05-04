@@ -69,7 +69,7 @@ void main()
     //vec2 fragCoord = var_texcoord0.xy;
 
     // Control Time if the Mouse is Pressed
-    if (0 < mouse.z) time = length(mouse.xy / resolution.xy)* 2.;
+    if (0 < mouse.z) time = length(mouse.xy / resolution.xy) * 2.;
 
     // Sample Texture and Animate Color
     vec4 color = texture2D(iChannel0, var_texcoord0.xy);
