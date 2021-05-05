@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                //
-//                       _ . , _ , . _ # ] S H A D E R F O L D [ # _ . , _                        //
+//                    _ . , _ , . _ # ] S H A D E R F O L D [ # _ . , _  , . _                    //
 //                                                                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Defold-compatible boilerplate shader for porting ShaderToy code.                              //
@@ -52,7 +52,7 @@ lowp vec4 mouse;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Functions
 
-float animate_color(float time, float scale) { return sin(time*scale)*.3 + .75; }
+float animateColor(float time, float scale) { return clamp(sin(time*scale)*.3 + .75, 0., 1.); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Shader
@@ -73,9 +73,9 @@ void main()
 
     // Sample Texture and Animate Color
     vec4 color = texture2D(iChannel0, var_texcoord0.xy);
-    color.x *= animate_color(time, 2.);
-    color.y *= animate_color(time, 3.);
-    color.z *= animate_color(time, 4.);
+    color.x *= animateColor(time, 2.);
+    color.y *= animateColor(time, 3.);
+    color.z *= animateColor(time, 4.);
 
     // Apply Tint and Output Color
     lowp vec4 tint_pm = vec4(tint.xyz * tint.w, tint.w); // Pre-multiply alpha since all runtime textures already are
