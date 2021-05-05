@@ -1,6 +1,6 @@
 name: "shader"
 tags: "tile"
-vertex_program: "/builtins/materials/model.vp"
+vertex_program: "/shaders/shader.vp"
 fragment_program: "/shaders/shader.fp"
 vertex_space: VERTEX_SPACE_WORLD
 vertex_constants {
