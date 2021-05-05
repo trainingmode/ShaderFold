@@ -1,6 +1,6 @@
 # ***ShaderFold***
 
-> Defold-compatible boilerplate shader for porting ShaderToy code.
+> Boilerplate Defold shader for porting ShaderToy code.
 
 -----
 
@@ -11,12 +11,12 @@
 ## **Notes**
 
 This is a basic Defold project template for porting ShaderToy shaders.  
-To learn how to port ShaderToy shaders to Defold, check out the [Official Defold ShaderToy Tutorial](https://defold.com/tutorials/shadertoy/).  
+To learn how to port ShaderToy code to Defold, check out the [Official Defold ShaderToy Tutorial](https://defold.com/tutorials/shadertoy/).  
 See [DefFX](https://github.com/subsoap/deffx), [Defold Shader Examples](https://github.com/subsoap/defold-shader-examples), [Defold Shaders](https://github.com/subsoap/defold-shaders), [DefFragments](https://github.com/paweljarosz/defragments), [Pixel Planets](https://github.com/selimanac/defold-pixel-planets), and [Glitch Defold](https://github.com/TheKing009/glitch-defold) for Defold-specific shaders implemented with best practices.
 
 The goal of this project is to provide a template for porting and playing with code, not reimplement every ShaderToy input.
 
-This is in development, not well tested, and suffers multiple issues. Many shaders require fine tuning for resolution and input parity. Feel free to [open an issue](https://github.com/trainingmode/ShaderFold/issues/new) for any problems you encounter or improvements.
+This is in development, not well tested, and suffers issues. Many shaders require fine tuning for resolution and input parity. Feel free to [open an issue](https://github.com/trainingmode/ShaderFold/issues/new) for any problems you encounter or improvements.
 
 -----
 
@@ -39,7 +39,8 @@ This is in development, not well tested, and suffers multiple issues. Many shade
 
 ## **Quick Start**
 
-Please see the [shader.fp](shaders/shader.fp) Fragment Program for a basic implementation.
+Please see the [shader.fp](shaders/shader.fp) Fragment Program for a basic implementation.  
+Ensure all Fragment Constants are used (ex: `vec4 mouse = iMouse;`), otherwise Defold will throw errors.
 
 ### *Material*
 
@@ -53,6 +54,10 @@ The shader renders onto the `shader_model` Model Component within the `ShaderFol
 ### *Script*
 
 Updates to shader constants are pushed from the [fold.script](main/fold.script) Script Component within the `ShaderFold` GameObject in the [main.collection](defold://open?path=/main/main.collection).
+
+1. Set the `Mesh Size` as the size, in pixels, of the `shader_model` mesh. The default mesh is the built-in 2x2 quad.
+
+2. Set the `Use Ratio` flag to define the `iResolution` behaviour. If true, `iResolution` will use size ratios (ex: `(1.78, 1.)`), otherwise uses the scaled mesh size, in pixels (ex: `mesh_size.xy * go_scale.xy`).
 
 -----
 
@@ -78,9 +83,9 @@ Updates to shader constants are pushed from the [fold.script](main/fold.script) 
 
 ## iResolution `vector4`
 
-- [***x***] `iResolution.x` The screen width, in pixels.
+- [***x***] `iResolution.x` The `ShaderFold` GameObject width, in pixels. If `Use Ratio` is set, outputs as the width ratio.
 
-- [***y***] `iResolution.y` The screen height, in pixels.
+- [***y***] `iResolution.y` The `ShaderFold` GameObject height, in pixels. If `Use Ratio` is set, outputs as the height ratio.
 
 - [***z***] `unused`
 
@@ -109,7 +114,7 @@ Updates to shader constants are pushed from the [fold.script](main/fold.script) 
     - `abs(iMouse.w)` The Mouse Click x-position.
 
     ```lua
-    if (sign(iMouse.w) > 0) color.rg *= abs(iMouse.wz) / iResolution.x;
+    if (sign(iMouse.w) > 0.) color.rg *= abs(iMouse.wz) / iResolution.x;
     ```
 
 ### I/O
@@ -119,8 +124,7 @@ Updates to shader constants are pushed from the [fold.script](main/fold.script) 
 - [***xy***] `in fragCoord` The input fragment position. Supplied to the Fragment Program by the Vertex Program.
 
     ```lua
-    vec2 uv = var_texcoord0.xy / iResolution.xy - 0.5;
-    uv.y *= iResolution.y / iResolution.x;
+    vec2 uv = var_texcoord0.xy * iResolution.xy - 0.5
     ```
 
 ## gl_FragColor `vector4`
