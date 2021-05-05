@@ -52,7 +52,7 @@ lowp vec4 mouse;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Functions
 
-float animate_color(float time, int scale) { return sin(time*scale)*.3 + .75; }
+float animate_color(float time, float scale) { return sin(time*scale)*.3 + .75; }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Shader
@@ -68,14 +68,14 @@ void main()
     mouse = iMouse;
     //vec2 fragCoord = var_texcoord0.xy;
 
-    // Control Time if the Mouse is Pressed
-    if (0 < mouse.z) time = length(mouse.xy / resolution.xy) * 2.;
+    // Control Time if the Mouse is Held
+    if (0 < mouse.z) time = length(-resolution.xy + mouse.xy) * 2.;
 
     // Sample Texture and Animate Color
     vec4 color = texture2D(iChannel0, var_texcoord0.xy);
-    color.x *= animate_color(time, 2);
-    color.y *= animate_color(time, 3);
-    color.z *= animate_color(time, 4);
+    color.x *= animate_color(time, 2.);
+    color.y *= animate_color(time, 3.);
+    color.z *= animate_color(time, 4.);
 
     // Apply Tint and Output Color
     lowp vec4 tint_pm = vec4(tint.xyz * tint.w, tint.w); // Pre-multiply alpha since all runtime textures already are
