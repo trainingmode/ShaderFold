@@ -17,6 +17,7 @@
 go.property("time_scale", 1)
 go.property("tint", vmath.vector4(1, 1, 1, 1))
 go.property("mesh_size", vmath.vector3(2, 2, 1)) -- Default Mesh is a 2x2 Quad
+go.property("use_ratio", true) -- True Outputs Resolution Ratios for iResolution, False Outputs the Scaled Mesh Size
 
 ----------------------------------------------------------------------------------------------------
 -- Internal Controller
@@ -49,6 +50,25 @@ local __dbg = {}
 __dbg.profiler_enabled =  false
 
 ----------------------------------------------------------------------------------------------------
+-- Functions
+----------------------------------------------------------------------------------------------------
+
+--
+-- Calculates the size of the [ShaderFold] GameObject according to the [self.use_ratio] behaviour,
+-- then sets the shader [iResolution].
+--
+-- Uses size ratios for [iResolution] if [self.use_ratio] is flagged, otherwise calculates the scaled
+-- size of the Mesh applied to the [ShaderFold] GameObject Model Component.
+--
+local function set_shader_resolution(self)
+	if self.use_ratio then -- Use Size Ratios for iResolution
+		local view_scale = math.min(self.screen_width, self.screen_height)
+		go.set(__msg.id_model, __msg.prop_resolution, vmath.vector4(self.go_scale.x / view_scale, self.go_scale.y / view_scale, 0, 0))
+	-- Use Pixel Unit Sizes for iResolution
+	else go.set(__msg.id_model, __msg.prop_resolution, vmath.vector4(self.go_scale.x, self.go_scale.y, 0, 0)) end
+end
+
+----------------------------------------------------------------------------------------------------
 -- Script
 ----------------------------------------------------------------------------------------------------
 
@@ -72,7 +92,7 @@ function init(self)
 	self.screen_width, self.screen_height = window.get_size()
 	self.go_scale = go.get(__msg.id_shader_go, __msg.prop_scale)
 	self.go_scale.x = self.go_scale.x * self.mesh_size.x ; self.go_scale.y = self.go_scale.y * self.mesh_size.y
-	go.set(__msg.id_model, __msg.prop_resolution, vmath.vector4(self.go_scale.x / self.screen_width, self.go_scale.y / self.screen_height, 0, 0))
+	set_shader_resolution(self)
 	
 	-- Initialize the Shader GameObject
 	__msg.id_shader_go = msg.url(nil, __msg.id_shader_go, nil)
@@ -83,7 +103,7 @@ function init(self)
 	window.set_listener(function (self, event, data)
 		if data.width then -- Ensure a Screen Size was Provided
 			self.screen_width, self.screen_height = data.width, data.height
-			go.set(__msg.id_model, __msg.prop_resolution, vmath.vector4(self.screen_width / self.go_scale.x, self.screen_height / self.go_scale.y, 0, 0)) end end)
+			set_shader_resolution(self) end end)
 end
 
 --
