@@ -12,7 +12,7 @@
 
 This is a basic Defold project template for porting ShaderToy shaders.  
 To learn how to port ShaderToy shaders to Defold, check out the [Official Defold ShaderToy Tutorial](https://defold.com/tutorials/shadertoy/).  
-See [DefFX](https://github.com/subsoap/deffx), [Defold Shader Examples](https://github.com/subsoap/defold-shader-examples), [Defold Shaders](https://github.com/subsoap/defold-shaders), and [Pixel Planets](https://github.com/selimanac/defold-pixel-planets) for Defold-specific shaders implemented with best practices.
+See [DefFX](https://github.com/subsoap/deffx), [Defold Shader Examples](https://github.com/subsoap/defold-shader-examples), [Defold Shaders](https://github.com/subsoap/defold-shaders), [DefFragments](https://github.com/paweljarosz/defragments), [Pixel Planets](https://github.com/selimanac/defold-pixel-planets), and [Glitch Defold](https://github.com/TheKing009/glitch-defold) for Defold-specific shaders implemented with best practices.
 
 The goal of this project is to provide a template for porting and playing with code, not reimplement every ShaderToy input.
 
