@@ -1,6 +1,6 @@
 # ***ShaderFold***
 
-> Boilerplate Defold shader for porting ShaderToy code.
+> Defold shader template for porting ShaderToy code.
 
 -----
 
@@ -47,13 +47,17 @@ Ensure all Fragment Constants are used (ex: `vec4 mouse = iMouse;`), otherwise D
 The [shader.material](defold://open?path=/shaders/shader.material) defines constants used by the shader.  
 Texture Samplers defined within the Material will automatically appear in the Model's properties.
 
+- Set additional shader parameters as Fragment Constants.
+
 ### *Model*
 
-The shader renders onto the `shader_model` Model Component within the `ShaderFold` GameObject in the [main.collection](defold://open?path=/main/main.collection).
+The shader renders onto the `shader_model` Model Component within the `ShaderFold` GameObject in [main.collection](defold://open?path=/main/main.collection).
+
+- Set `iChannel0` as the texture to render onto the model.
 
 ### *Script*
 
-Updates to shader constants are pushed from the [fold.script](main/fold.script) Script Component within the `ShaderFold` GameObject in the [main.collection](defold://open?path=/main/main.collection).
+Updates to Fragment Constants are pushed from the [fold.script](main/fold.script) Script Component within the `ShaderFold` GameObject in [main.collection](defold://open?path=/main/main.collection).
 
 1. Set the `Mesh Size` as the size, in pixels, of the `shader_model` mesh. The default mesh is the built-in 2x2 quad.
 
@@ -97,9 +101,9 @@ Updates to shader constants are pushed from the [fold.script](main/fold.script) 
 
 ## iMouse `vector4`
 
-- [***x***] `iMouse.x` The current Mouse x-position, if the Mouse Button is held.
+- [***x***] `iMouse.x` The Mouse x-position while the Mouse Button is held.
 
-- [***y***] `iMouse.y` The current Mouse y-position, if the Mouse Button is held.
+- [***y***] `iMouse.y` The Mouse y-position while the Mouse Button is held.
 
 - [***z***] `iMouse.z` Contains both the Mouse Click y-position and the Mouse Down state.
 
